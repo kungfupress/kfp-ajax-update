@@ -7,13 +7,14 @@
  * Author URI:   https://kungfupress.com/
  */
 
+// Admin menu
 add_action("admin_menu", "Kfp_Ajax_Update_menu");
 
-// Handle ajax post update
+// Links the hook to the function that handles the ajax post update
 add_action('wp_ajax_kfp_ajax_update', 'Kfp_Ajax_update');
 
 /**
- * Agrega el menú del plugin al formulario de WordPress
+ * Add the admin menu 
  *
  * @return void
  */
@@ -23,6 +24,11 @@ function Kfp_Ajax_Update_menu()
         "kfp_ajax_update_menu", "Kfp_Ajax_Update_admin", "dashicons-feedback", 45);
 }
 
+/**
+ * Create the admin page where you show and edit your data
+ *
+ * @return void
+ */
 function Kfp_Ajax_Update_admin()
 {
     
