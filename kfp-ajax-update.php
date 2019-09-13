@@ -1,20 +1,20 @@
 <?php
 /**
  * Plugin Name:  KFP Ajax Update
- * Description:  Probando a actualizar campos con Ajax
+ * Description:  Probando a actualizar campos con Ajax desde un listado de entradas
  * Version:      0.1.1
  * Author:       Juanan Ruiz
  * Author URI:   https://kungfupress.com/
  */
 
-// Admin menu
+// Add a new menu item
 add_action("admin_menu", "Kfp_Ajax_Update_menu");
 
 // Links the hook to the function that handles the ajax post update
 add_action('wp_ajax_kfp_ajax_update', 'Kfp_Ajax_update');
 
 /**
- * Add the admin menu 
+ * Add new menu item to the dashboard
  *
  * @return void
  */
@@ -37,6 +37,7 @@ function Kfp_Ajax_Update_admin()
         'ajax_url' => admin_url('admin-ajax.php'),
         'ajax_nonce' => wp_create_nonce('ajax_update_' . admin_url('admin-ajax.php')),
     ));
+
     $args = array( 'post_type' => 'post', 'posts_per_page' => -1, 'orderby' => 'title', 
         'order' => 'DESC', 'post_status' => 'publish' );
     $myposts = get_posts( $args );
@@ -50,7 +51,8 @@ function Kfp_Ajax_Update_admin()
     foreach($myposts as $post) {
         $html .= "<tr data-post_id='$post->ID'>";
         $html .= "<td>$post->post_title</td>";
-        $html .= "<td><textarea class='auto-update' style='width:100%;'>$post->post_excerpt</textarea></td>";
+        $html .= "<td><textarea class='auto-update' style='width:100%;'>";
+        $html .= esc_textarea($post->post_excerpt) ." </textarea></td>";
         $html .= "</tr>";
     }
     $html .= '</tbody></table></div>';
@@ -64,10 +66,10 @@ function Kfp_Ajax_Update_admin()
  */
 function Kfp_Ajax_update() {
     if ( defined('DOING_AJAX') && DOING_AJAX
-        && wp_verify_nonce($_POST['nonce'], 'ajax_update_' . admin_url( 'admin-ajax.php'))) {
+         && wp_verify_nonce($_POST['nonce'], 'ajax_update_' . admin_url( 'admin-ajax.php'))) {
         $args = array(
-            'ID' => $_POST['post_id'],
-            'post_excerpt' => $_POST['post_excerpt']
+            'ID' => (int)$_POST['post_id'],
+            'post_excerpt' => sanitize_text_field($_POST['post_excerpt'])
         );
         wp_update_post($args);
         echo "Ok";
