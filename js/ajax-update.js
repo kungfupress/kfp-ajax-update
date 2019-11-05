@@ -1,3 +1,5 @@
+
+/** js/ajax-update.js */
 jQuery(document).ready(function($){
     $('.auto-update').blur(function(event){
         $.post(ajax_object.ajax_url, 
